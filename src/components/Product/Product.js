@@ -4,12 +4,12 @@ import Image from "./components/Image";
 import Name from "./components/Name";
 import Price from "./components/Price";
 
-const Product = ({ id, image, description, name, price }) => {
+const Product = ({ image, name, price }) => {
 	return (
 			<ProductStyle>
-			<Image url={image} description={description}/>
+			<Image url={image} description={name}/>
 			<Price value={price} />
-			<Name name={name+' ('+id+')'} />
+			<Name name={name} />
 			</ProductStyle>
 	);
 };

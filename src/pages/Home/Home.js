@@ -5,27 +5,25 @@ import HeaderSmall from "../../components/HeaderSmall/HeaderSmall";
 import Products from "../../components/Products/Products";
 import Product from "../../components/Product/Product";
 
-import catalog from "../../catalog.json";
+import catalog from "../../products.json";
 
 const renderProduct = product => (
   <Product
     key={product.id}
-    id={product.id}
-    image={product.img}
-    description={product.description}
+    image={product.image}
     name={product.name}
-    price={product.price}
+    price={product.amount}
   />
 );
 
 const uniqueDesktops = catalog
-  .filter((p, index, self) => index === self.findIndex((t) => (t.name === p.name)))
-  .filter(p=>p.type === "desktop")
+  .filter(p=>p.category === "desktop")
+  .filter(p=>p.featured === true)
   .map(p=>renderProduct(p));
 
 const uniqueTablets = catalog
-  .filter((p, index, self) => index === self.findIndex((t) => (t.name === p.name)))
-  .filter(p=>p.type === "tablet")
+  .filter(p=>p.category === "tablet")
+  .filter(p=>p.featured === true)
   .map(p=>renderProduct(p));
 
 const Home = () => (

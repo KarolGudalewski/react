@@ -12,28 +12,7 @@ import ColumnRight from "./components/ColumnRight";
 import Products from "../../components/Products/Products";
 import Product from "../../components/Product/Product";
 
-import catalog from "../../catalog.json";
-
-const renderProduct = product => (
-	<Product
-		key={product.id}
-		id={product.id}
-		image={product.img}
-		description={product.description}
-		name={product.name}
-		price={product.price}
-	/>
-);
-
-const renderBrands = (product, chosenBrand) => (
-	<BrandRadio
-		key={product.id}
-		name={"manufacturere"}
-		brand={product.brand}
-		stateBrand = {chosenBrand.state.brand}
-		onBrandChange = {chosenBrand.onBrandChange}
-	/>
-);
+import catalog from "../../products.json";
 
 class Catalog extends React.Component {
 
@@ -44,16 +23,17 @@ class Catalog extends React.Component {
 			searchText: ""
 		};
 
-		this.baseState = this.state;
-
 		this.onChangeSearchText = this.onChangeSearchText.bind(this);
 		this.onBrandChange = this.onBrandChange.bind(this);
 		this.onClickClear = this.onClickClear.bind(this);
 
 	};
 
-	onClickClear(event) {
-		this.setState(this.baseState);
+	onClickClear() {
+		this.setState({
+			brand: "All",
+			searchText: ""
+		});
 	}
 
 	onBrandChange(event) {
@@ -64,16 +44,36 @@ class Catalog extends React.Component {
 		this.setState({ searchText: event.target.value });
 	}
 
+	renderProduct(product) {
+		return <Product
+			key={product.id}
+			image={product.image}
+			name={product.name}
+			price={product.amount}
+		/>
+	};
+
+	renderBrands(product) {
+		return <BrandRadio
+			key={product.id}
+			name={"manufacturere"}
+			brand={product.manufacture}
+			stateBrand={this.state.brand}
+			onBrandChange={this.onBrandChange}
+			checked={this.state.brand === product.manufacture}
+		/>
+	}
+
 	render() {
 
 		const products = catalog
 			.filter(product => (product.name.includes(this.state.searchText)
-				&& (this.state.brand === "All" ? product.brand : product.brand === this.state.brand)))
-			.map(p=>renderProduct(p));
+				&& (this.state.brand === "All" ? product.manufacture : product.manufacture === this.state.brand)))
+			.map(p=>this.renderProduct(p));
 
 		const brands = catalog
-			.filter((p, index, self) => index === self.findIndex((t) => (t.brand === p.brand)))
-			.map(product => renderBrands(product, this));
+			.filter((p, index, self) => index === self.findIndex((t) => (t.manufacture === p.manufacture)))
+			.map(product => this.renderBrands(product));
 
 		return (
 			<Container>
@@ -85,12 +85,13 @@ class Catalog extends React.Component {
 						<Filter>
 							<FilterHeader>
 								<h4>Search</h4>
-								<Clear href="#" onClick={this.onClickClear}>Clear</Clear>
+								<Clear onClick={this.onClickClear}>Clear</Clear>
 							</FilterHeader>
 							<div>
 								<Search
 									placeholder={"search..."}
 									searchText={this.onChangeSearchText}
+									defaultValue={this.state.searchText}
 								/>
 							</div>
 							<h4>Manufacturer</h4>
@@ -100,6 +101,7 @@ class Catalog extends React.Component {
 										name={"manufacturere"}
 										brand={"All"}
 										stateBrand = {this.state.brand}
+										checked = {this.state.brand === "All"}
 										onBrandChange = {this.onBrandChange}
 									/>
 									{brands}
